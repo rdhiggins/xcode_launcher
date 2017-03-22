@@ -1,4 +1,65 @@
 #!/usr/bin/env ruby
 
+require 'xcode_launcher'
+require 'optparse'
+require 'colorize'
+require 'shellwords'
 
-puts "Hello"
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Useage: xcl [options] [project/playground]'
+
+  opts.on('-b', '--beta', 'Launch with Xcode beta') do
+    options[:beta] = true
+  end
+
+  opts.on('-l', '--list', 'List Xcode versions installed') do
+    options[:list] = true
+  end
+
+  opts.on('-v', '--version VERSION', 'Specifies which Xcode version to use (non-beta)') do |version|
+    options[:version] = version
+  end
+
+  opts.on('-h', '--help', 'Prints this help') do
+    puts opts
+    exit
+  end
+end.parse!
+
+executables = XcodeLauncher.executables
+
+if options[:list]
+  puts 'Version'.center(10) + 'Installed as'
+  executables.each do |version, path|
+    puts version.ljust(10).colorize(:white) \
+    + File.basename(path, '.app').colorize(:green)
+  end
+  exit
+end
+
+target_executable = executables.select do |key, path|
+  ret = false
+  if options[:beta] == true
+    ret = true if path.include? '-beta.app'
+  elsif options[:version]
+    ret = true if key == options[:version]
+  elsif path.include? 'Xcode.app'
+    ret = true
+  end
+  ret
+end
+
+version, path = target_executable.first
+
+filename = ""
+if ARGV.count == 1
+  filename = ARGV[0]
+else
+  filename = Dir.glob("*.xcodeproj").first
+end
+
+unless path.nil? || filename.nil?
+  puts 'Using version'
+  `open -a #{path} #{Shellwords.escape(filename)}` unless path.nil? || filename.nil?
+end
