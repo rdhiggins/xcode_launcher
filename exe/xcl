@@ -54,16 +54,19 @@ end
 
 version, path = target_executable.first
 
-filename = ''
-if ARGV.count == 1
-  filename = ARGV[0]
-else
-  filename = Dir.glob('*.xcodeproj').first
+filename = ARGV.count == 1 ? ARGV[0] : Dir.glob('*.xcodeproj').first
+
+def print_banner
+  puts 'Xcode Launcher: Launch Xcode form the command line.'
+  puts "version: #{XcodeLauncher::VERSION}\n\n"
 end
 
 unless path.nil? || filename.nil?
+  print_banner
+
   banner = 'Using version ' + version.colorize(:green)
   banner += ' (beta)' if path.include?('-beta.app')
+  banner += ' to open ' + File.basename(filename).colorize(:green)
   puts banner
 
   `open -a #{path} #{Shellwords.escape(filename)}` \
