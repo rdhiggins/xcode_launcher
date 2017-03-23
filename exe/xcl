@@ -29,8 +29,10 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+# Lookup installed Xcode versions
 executables = XcodeLauncher.executables
 
+# List all Xcode version installed, then exit
 if options[:list]
   puts 'Version'.center(10) + 'Installed as'
   executables.each do |version, path|
@@ -40,6 +42,7 @@ if options[:list]
   exit
 end
 
+# Figure out which Xcode to use
 target_executable = executables.select do |key, path|
   ret = false
   if options[:beta] == true
@@ -51,24 +54,21 @@ target_executable = executables.select do |key, path|
   end
   ret
 end
-
 version, path = target_executable.first
 
+# Figure out which project/playground to open
 filename = ARGV.count == 1 ? ARGV[0] : Dir.glob('*.xcodeproj').first
 
-def print_banner
-  puts 'Xcode Launcher: Launch Xcode form the command line.'
-  puts "version: #{XcodeLauncher::VERSION}\n\n"
-end
-
+# Open project/playground in Xcode, then exit
 unless path.nil? || filename.nil?
-  print_banner
-
   banner = 'Using version ' + version.colorize(:green)
   banner += ' (beta)' if path.include?('-beta.app')
   banner += ' to open ' + File.basename(filename).colorize(:green)
   puts banner
 
-  `open -a #{path} #{Shellwords.escape(filename)}` \
-                              unless path.nil? || filename.nil?
+  `open -a #{path} #{Shellwords.escape(filename)}`
+  exit
 end
+
+# Just open Xcode
+`open -a #{path}` unless path.nil?
