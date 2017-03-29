@@ -57,7 +57,7 @@ end
 version, path = target_executable.first
 
 # Figure out which project/playground to open
-filename = ARGV.count == 1 ? ARGV[0] : Dir.glob('*.xcodeproj').first
+filename = ARGV.count == 1 ? ARGV[0] : XcodeLauncher.find_project
 
 # Open project/playground in Xcode, then exit
 unless path.nil? || filename.nil?
