@@ -1,4 +1,5 @@
 require 'ruby-progressbar'
+require 'fileutils'
 
 # Routines for installing xcode versions from mounted DMG's
 module XcodeLauncher
