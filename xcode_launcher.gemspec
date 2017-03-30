@@ -39,4 +39,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'plist'
   spec.add_dependency 'colorize'
+  spec.add_dependency 'ruby-progressbar'
 end
