@@ -4,8 +4,13 @@ require 'xcode_launcher'
 require 'optparse'
 require 'colorize'
 require 'shellwords'
+require 'yaml'
+
+default_file='.xcl_defaults'
 
 options = {}
+options = YAML.load_file(default_file).inject({}) {|memo,(k,v)| memo[k.to_sym] = v; memo} if File.file?(default_file)
+
 OptionParser.new do |opts|
   opts.banner = 'Useage: xcl [options] [project/playground]'
 
