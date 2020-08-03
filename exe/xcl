@@ -91,9 +91,9 @@ unless path.nil? || filename.nil?
   banner += ' to open ' + File.basename(filename).colorize(:green)
   puts banner
 
-  `open -a #{path} #{Shellwords.escape(filename)}`
+  `env DEVELOPER_DIR=#{path} xed #{Shellwords.escape(filename)}`
   exit
 end
 
 # Just open Xcode
-`open -a #{path}` unless path.nil?
+`env DEVELOPER_DIR=#{path} xed .` unless path.nil?
